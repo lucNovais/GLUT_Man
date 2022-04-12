@@ -29,6 +29,7 @@ void init()
 
 void DrawBody(float x, float y, float radius, float colors[]);
 void DrawEye(float body_x, float body_y);
+void DrawMouth(float body_x, float body_y);
 
 void DrawScenario();
 void DrawWalls(float x, float y, float width, float height, float color[]);
@@ -48,6 +49,7 @@ void Draw()
     DrawScenario();
     DrawBody(glutman.pos_x, glutman.pos_y, glutman.radius, glutman.colors);
     DrawEye(glutman.pos_x, glutman.pos_y);
+    DrawMouth(glutman.pos_x, glutman.pos_y);
 
     glFlush();
 }
@@ -117,7 +119,7 @@ void DrawEye(float body_x, float body_y)
     float t = 0.0f;
     float radius = 0.02f;
 
-    glColor3f(0.2f, 0.2f, 0.6f);
+    glColor3f(0.0f, 0.0f, 0.0f);
     glBegin(GL_POLYGON);
     while(t < 2 * 3.14)
     {
@@ -127,6 +129,17 @@ void DrawEye(float body_x, float body_y)
         glVertex2f(x, y);
         t += 0.2;
     }
+
+    glEnd();
+}
+
+void DrawMouth(float body_x, float body_y)
+{
+    glBegin(GL_POLYGON);
+
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x, body_y);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y + 0.05f);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y - 0.05f);
 
     glEnd();
 }
