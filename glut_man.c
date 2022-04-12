@@ -10,6 +10,7 @@ typedef struct glutman
     float pos_x;
     float pos_y;
     float radius;
+    float speed;
     float colors[3];
 }GlutMan;
 
@@ -21,6 +22,14 @@ typedef struct wall
     float height;
     float color[3];
 }Wall;
+
+GlutMan glutman = {
+    -0.65f,
+    0.65f,
+    0.1f,
+    0.015f,
+    {0.75f, 0.75f, 0.0f}
+};
 
 void init()
 {
@@ -34,17 +43,34 @@ void DrawMouth(float body_x, float body_y);
 void DrawScenario();
 void DrawWalls(float x, float y, float width, float height, float color[]);
 
+void Move(int key, int x, int y)
+{
+    if(key == GLUT_KEY_UP)
+    {
+        glutman.pos_y += glutman.speed;
+        glutPostRedisplay();
+    }
+    if(key == GLUT_KEY_DOWN)
+    {
+        glutman.pos_y -= glutman.speed;
+        glutPostRedisplay();
+    }
+    if(key == GLUT_KEY_LEFT)
+    {
+        glutman.pos_x -= glutman.speed;
+        glutPostRedisplay();
+    }
+    if(key == GLUT_KEY_RIGHT)
+    {
+        glutman.pos_x += glutman.speed;
+        glutPostRedisplay();
+    }
+}
+
 void Draw()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-
-    GlutMan glutman = {
-        -0.6f,
-        0.6f,
-        0.1f,
-        {0.75f, 0.75f, 0.0f}
-    };
 
     DrawScenario();
     DrawBody(glutman.pos_x, glutman.pos_y, glutman.radius, glutman.colors);
@@ -117,7 +143,7 @@ void DrawEye(float body_x, float body_y)
 {
     float x, y;
     float t = 0.0f;
-    float radius = 0.02f;
+    float radius = 0.015f;
 
     glColor3f(0.0f, 0.0f, 0.0f);
     glBegin(GL_POLYGON);
@@ -138,8 +164,8 @@ void DrawMouth(float body_x, float body_y)
     glBegin(GL_POLYGON);
 
     glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x, body_y);
-    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y + 0.05f);
-    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y - 0.05f);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y + 0.03f);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y - 0.035f);
 
     glEnd();
 }
@@ -170,6 +196,7 @@ int main(int argc, char **argv)
     glutCreateWindow("GLUT Man!");
 
     glutDisplayFunc(Draw);
+    glutSpecialFunc(Move);
 
     init();
     glutMainLoop();
