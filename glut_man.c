@@ -11,6 +11,9 @@ typedef struct glutman
     float pos_y;
     float radius;
     float speed;
+    // If facing = 0, the character is facing right;
+    // If facing = 1, the character is facing left;
+    int facing;
     float colors[3];
 }GlutMan;
 
@@ -28,6 +31,7 @@ GlutMan glutman = {
     0.65f,
     0.1f,
     0.015f,
+    0,
     {0.75f, 0.75f, 0.0f}
 };
 
@@ -37,8 +41,8 @@ void init()
 }
 
 void DrawBody(float x, float y, float radius, float colors[]);
-void DrawEye(float body_x, float body_y);
-void DrawMouth(float body_x, float body_y);
+void DrawEye(float body_x, float body_y, int facing);
+void DrawMouth(float body_x, float body_y, int facing);
 
 void DrawScenario();
 void DrawWalls(float x, float y, float width, float height, float color[]);
@@ -58,11 +62,13 @@ void Move(int key, int x, int y)
     if(key == GLUT_KEY_LEFT)
     {
         glutman.pos_x -= glutman.speed;
+        glutman.facing = 1;
         glutPostRedisplay();
     }
     if(key == GLUT_KEY_RIGHT)
     {
         glutman.pos_x += glutman.speed;
+        glutman.facing = 0;
         glutPostRedisplay();
     }
 }
@@ -74,8 +80,8 @@ void Draw()
 
     DrawScenario();
     DrawBody(glutman.pos_x, glutman.pos_y, glutman.radius, glutman.colors);
-    DrawEye(glutman.pos_x, glutman.pos_y);
-    DrawMouth(glutman.pos_x, glutman.pos_y);
+    DrawEye(glutman.pos_x, glutman.pos_y, glutman.facing);
+    DrawMouth(glutman.pos_x, glutman.pos_y, glutman.facing);
 
     glFlush();
 }
@@ -139,7 +145,7 @@ void DrawBody(float init_x, float init_y, float radius, float colors[])
     glEnd();
 }
 
-void DrawEye(float body_x, float body_y)
+void DrawEye(float body_x, float body_y, int facing)
 {
     float x, y;
     float t = 0.0f;
@@ -149,7 +155,10 @@ void DrawEye(float body_x, float body_y)
     glBegin(GL_POLYGON);
     while(t < 2 * 3.14)
     {
-        x = (body_x + 0.03) + radius * cos(t);
+        if(facing == 0)
+            x = (body_x + 0.03) + radius * cos(t);
+        else if(facing == 1)
+            x = (body_x - 0.03) + radius * cos(t);
         y = (body_y + 0.05) + radius * sin(t);
 
         glVertex2f(x, y);
@@ -159,13 +168,22 @@ void DrawEye(float body_x, float body_y)
     glEnd();
 }
 
-void DrawMouth(float body_x, float body_y)
+void DrawMouth(float body_x, float body_y, int facing)
 {
     glBegin(GL_POLYGON);
 
     glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x, body_y);
-    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y + 0.03f);
-    glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y - 0.035f);
+
+    if(facing == 0)
+    {
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y + 0.03f);
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.1f, body_y - 0.035f);
+    }
+    else if(facing == 1)
+    {
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.1f, body_y + 0.03f);
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.1f, body_y - 0.035f);
+    }
 
     glEnd();
 }
