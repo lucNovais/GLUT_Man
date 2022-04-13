@@ -30,14 +30,14 @@ GlutMan glutman = {
     -0.65f,
     0.65f,
     0.1f,
-    0.015f,
+    0.018f,
     0,
     {0.75f, 0.75f, 0.0f}
 };
 
 void init()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);    
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void DrawBody(float x, float y, float radius, float colors[]);
