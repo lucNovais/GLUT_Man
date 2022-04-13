@@ -1,3 +1,6 @@
+//Lucas Novais - 18.1.8046
+//Thiago Figueiredo - 18.1.8017
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
