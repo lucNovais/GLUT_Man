@@ -43,29 +43,30 @@ void init()
 void DrawBody(float x, float y, float radius, float colors[]);
 void DrawEye(float body_x, float body_y, int facing);
 void DrawMouth(float body_x, float body_y, int facing);
-
 void DrawScenario();
 void DrawWalls(float x, float y, float width, float height, float color[]);
 
 void Move(int key, int x, int y)
 {
-    if(key == GLUT_KEY_UP)
+    if(key == GLUT_KEY_UP && (glutman.pos_y + glutman.speed) < 1 - glutman.radius - 0.05f)
     {
         glutman.pos_y += glutman.speed;
+        glutman.facing = 3;
         glutPostRedisplay();
     }
-    if(key == GLUT_KEY_DOWN)
+    if(key == GLUT_KEY_DOWN  && (glutman.pos_y - glutman.speed) > (-1 + glutman.radius + 0.05f))
     {
         glutman.pos_y -= glutman.speed;
+        glutman.facing = 2;
         glutPostRedisplay();
     }
-    if(key == GLUT_KEY_LEFT)
+    if(key == GLUT_KEY_LEFT && (glutman.pos_x - glutman.speed) > (-1 + glutman.radius + 0.05f))
     {
         glutman.pos_x -= glutman.speed;
         glutman.facing = 1;
         glutPostRedisplay();
     }
-    if(key == GLUT_KEY_RIGHT)
+    if(key == GLUT_KEY_RIGHT && (glutman.pos_x + glutman.speed) < 1 - glutman.radius - 0.05f)
     {
         glutman.pos_x += glutman.speed;
         glutman.facing = 0;
@@ -156,11 +157,27 @@ void DrawEye(float body_x, float body_y, int facing)
     while(t < 2 * 3.14)
     {
         if(facing == 0)
+        {
             x = (body_x + 0.03) + radius * cos(t);
+            y = (body_y + 0.05) + radius * sin(t);
+        }
         else if(facing == 1)
+        {
             x = (body_x - 0.03) + radius * cos(t);
-        y = (body_y + 0.05) + radius * sin(t);
-
+            y = (body_y + 0.05) + radius * sin(t);
+        
+        }
+        else if(facing == 2)
+        {
+            x = (body_x + 0.05) + radius * cos(t);
+            y = (body_y - 0.03) + radius * sin(t);
+        }
+        else if(facing == 3)
+        {
+            x = (body_x - 0.05) + radius * cos(t);
+            y = (body_y + 0.03) + radius * sin(t);
+        }
+        
         glVertex2f(x, y);
         t += 0.2;
     }
@@ -183,6 +200,16 @@ void DrawMouth(float body_x, float body_y, int facing)
     {
         glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.1f, body_y + 0.03f);
         glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.1f, body_y - 0.035f);
+    }
+    else if(facing == 2)
+    {
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.03f, body_y - 0.1f);
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.035f, body_y - 0.1f);
+    }
+    else if(facing == 3)
+    {
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x - 0.03f, body_y + 0.1f);
+        glColor3f(0.0f, 0.0f, 0.0f); glVertex2f(body_x + 0.035f, body_y + 0.1f);
     }
 
     glEnd();
