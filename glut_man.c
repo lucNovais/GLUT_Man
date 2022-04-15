@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include <GL/gl.h>
 #include <GL/glut.h>
@@ -14,8 +15,6 @@ typedef struct glutman
     float pos_y;
     float radius;
     float speed;
-    // If facing = 0, the character is facing right;
-    // If facing = 1, the character is facing left;
     int facing;
     float colors[3];
 }GlutMan;
@@ -29,15 +28,6 @@ typedef struct wall
     float color[3];
 }Wall;
 
-GlutMan glutman = {
-    -0.65f,
-    0.65f,
-    0.1f,
-    0.018f,
-    0,
-    {0.75f, 0.75f, 0.0f}
-};
-
 void init()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -48,6 +38,17 @@ void DrawEye(float body_x, float body_y, int facing);
 void DrawMouth(float body_x, float body_y, int facing);
 void DrawScenario();
 void DrawWalls(float x, float y, float width, float height, float color[]);
+void DrawFood(float pos_x, float pos_y, float radius);
+void GenerateFoodPosition(float* food_positions, int food_number);
+
+GlutMan glutman = {
+    -0.65f,
+    0.65f,
+    0.1f,
+    0.018f,
+    0,
+    {0.75f, 0.75f, 0.0f}
+};
 
 void Move(int key, int x, int y)
 {
@@ -56,6 +57,8 @@ void Move(int key, int x, int y)
         glutman.pos_y += glutman.speed;
         glutman.facing = 3;
         glutPostRedisplay();
+
+        // glTranslatef(glutman.pos_x, glutman.pos_y + glutman.speed, 0.0f);
     }
     if(key == GLUT_KEY_DOWN  && (glutman.pos_y - glutman.speed) > (-1 + glutman.radius + 0.05f))
     {
@@ -75,6 +78,36 @@ void Move(int key, int x, int y)
         glutman.facing = 0;
         glutPostRedisplay();
     }
+}
+
+void GenerateFoodPosition(float* food_positions, int food_number)
+{
+    float positions_x[food_number];
+    float positions_y[food_number];
+    float a = 2.0f;
+
+    float food_x = ((float)rand() / (float)(RAND_MAX)) / a;
+    float food_y = ((float)rand() / (float)(RAND_MAX)) / a;
+
+    for(int i = 0; i <= food_number; i++)
+    {
+        if(food_x > 0.95f || food_x < 0.05)
+        {
+            while(food_x > 0.95f || food_x < 0.05)
+                food_x = ((float)rand() / (float)(RAND_MAX)) / a;
+            positions_x[i] = food_x;
+        }
+
+        if(food_y > 0.95f || food_y < 0.05)
+        {
+            while(food_y > 0.95f || food_y < 0.05)
+                food_y = ((float)rand() / (float)(RAND_MAX)) / a;
+            positions_y[i] = food_y;
+        }
+    }
+
+    memcpy(food_positions, positions_x, food_number * sizeof(float));
+    memcpy(food_positions, positions_y, food_number * sizeof(float));
 }
 
 void Draw()
@@ -168,7 +201,7 @@ void DrawEye(float body_x, float body_y, int facing)
         {
             x = (body_x - 0.03) + radius * cos(t);
             y = (body_y + 0.05) + radius * sin(t);
-        
+
         }
         else if(facing == 2)
         {
@@ -180,7 +213,7 @@ void DrawEye(float body_x, float body_y, int facing)
             x = (body_x - 0.05) + radius * cos(t);
             y = (body_y + 0.03) + radius * sin(t);
         }
-        
+
         glVertex2f(x, y);
         t += 0.2;
     }
@@ -230,14 +263,44 @@ void DrawWalls(float x, float y, float width, float height, float color[])
     glEnd();
 }
 
+void DrawFood(float pos_x, float pos_y, float radius)
+{
+    float x, y;
+    float t = 0.0f;
+
+    glColor3f(0.8f, 0.0f, 0.2f);
+    glBegin(GL_POLYGON);
+
+    while(t < 2 * 3.14)
+    {
+        x = pos_x + radius * cos(t);
+        y = pos_y + radius * sin(t);
+
+        glVertex2f(x, y);
+        t += 0.2;
+    }
+
+    glEnd();
+}
+
 int main(int argc, char **argv)
 {
+    srand(time(NULL));
+
     glutInit(&argc, argv);
 
     int s_width = glutGet(GLUT_SCREEN_WIDTH);
     int s_height = glutGet(GLUT_SCREEN_HEIGHT);
     int w_width = 800;
     int w_height = 600;
+
+    float* food_positions = malloc(8 * sizeof(float));
+    GenerateFoodPosition(&food_positions, 8);
+
+    for(int i = 0; i < 8; i++)
+    {
+        printf("%f", food_positions[i]);
+    }
 
     glutInitWindowSize(w_width, w_height);
     glutInitWindowPosition((s_width - w_width) / 2, (s_height - w_height) / 2);
