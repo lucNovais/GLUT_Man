@@ -1,3 +1,10 @@
+/*
+    ALUNOS:
+
+    Lucas Novais da Silva - 18.1.8046
+    Thiago Silva Figueiredo - 18.1.8017
+*/
+
 #include <stdlib.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

@@ -57,8 +57,6 @@ void Move(int key, int x, int y)
         glutman.pos_y += glutman.speed;
         glutman.facing = 3;
         glutPostRedisplay();
-
-        // glTranslatef(glutman.pos_x, glutman.pos_y + glutman.speed, 0.0f);
     }
     if(key == GLUT_KEY_DOWN  && (glutman.pos_y - glutman.speed) > (-1 + glutman.radius + 0.05f))
     {
@@ -89,7 +87,7 @@ void GenerateFoodPosition(float* food_positions, int food_number)
     float food_x = ((float)rand() / (float)(RAND_MAX)) / a;
     float food_y = ((float)rand() / (float)(RAND_MAX)) / a;
 
-    for(int i = 0; i <= food_number; i++)
+    for(int i = 0; i < food_number; i++)
     {
         if(food_x > 0.95f || food_x < 0.05)
         {
